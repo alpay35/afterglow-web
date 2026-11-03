@@ -46,16 +46,32 @@ function cacheBusy() {
   }
 }
 
+/* Önbellek durumu her zaman yazılır, boş bırakılmaz.
+ *
+ * Boş bırakıldığında "önbellekte" ile "hiç önbellek yok" birbirinden ayırt
+ * edilemiyordu; ikisi de sessiz kalıyordu. Bu satır, konsolda tek bakışta
+ * hangisinin geçerli olduğunu söyler:
+ *   - "önbellek hazır"  -> tarayıcı dosyaları gerçekten sakladı
+ *   - "önbellek yok"    -> her açılışta sunucudan iniyor
+ *   - "desteklemiyor"   -> tarayıcıda Application Cache hiç yok
+ */
 function cacheNote() {
   if (!cacheEl) return;
-  if (!appCache) { cacheEl.textContent = ""; return; }
   var text = "";
-  try {
-    if (appCache.status === appCache.CHECKING) text = "önbellek denetleniyor";
-    else if (appCache.status === appCache.DOWNLOADING) text = "dosyalar iniyor, bekle";
-    else if (appCache.status === appCache.UPDATEREADY) text = "yeni sürüm önbellekte, sayfayı yenileyip aç";
-    else if (appCache.status === appCache.OBSOLETE) text = "önbellek düştü, doğrudan sunucudan";
-  } catch (e) {}
+  if (!appCache) {
+    text = "önbellek desteklenmiyor";
+  } else {
+    try {
+      if (appCache.status === appCache.CHECKING) text = "önbellek denetleniyor";
+      else if (appCache.status === appCache.DOWNLOADING) text = "dosyalar iniyor, bekle";
+      else if (appCache.status === appCache.UPDATEREADY) text = "yeni sürüm önbellekte";
+      else if (appCache.status === appCache.OBSOLETE) text = "önbellek düştü, doğrudan sunucudan";
+      else if (appCache.status === appCache.IDLE) text = "önbellek hazır ve güncel";
+      else if (appCache.status === appCache.UNCACHED) text = "önbellek yok, sunucudan";
+    } catch (e) {
+      text = "";
+    }
+  }
   cacheEl.textContent = text;
 }
 
