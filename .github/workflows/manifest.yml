@@ -1,0 +1,49 @@
+name: manifest
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # cache.appcache is how the console picks up a new build: it refetches
+      # only when the manifest itself changes, and the manifest carries the
+      # hash of every file it lists. A stale manifest therefore keeps serving
+      # the old page with no error anywhere -- the failure that broke the
+      # previous Crystallize fork silently. This fails the build instead.
+      - name: cache.appcache matches the files it lists
+        run: |
+          fail=0
+          n=0
+          while IFS= read -r line; do
+            case "$line" in
+              ''|'# '*|'CACHE MANIFEST'|'NETWORK:'|'*') continue ;;
+            esac
+            f=${line%% *}
+            h=${line##*#}
+            if [ "$f" = "$line" ] || [ ${#h} -ne 32 ]; then
+              echo "::error::malformed cache.appcache line: $line"
+              fail=1
+              continue
+            fi
+            n=$((n+1))
+            if [ ! -f "$f" ]; then
+              echo "::error file=$f::listed in cache.appcache but missing"
+              fail=1
+              continue
+            fi
+            real=$(sha256sum "$f" | cut -c1-32)
+            if [ "$real" != "$h" ]; then
+              echo "::error file=$f::manifest says $h, file is $real -- run ./make-manifest.sh"
+              fail=1
+            fi
+          done < cache.appcache
+          if [ "$n" -eq 0 ]; then
+            echo "::error::no entries parsed from cache.appcache"
+            fail=1
+          fi
+          exit $fail

@@ -8,6 +8,48 @@ so the usual payloads work as they do after any other kernel exploit.
 This is the browser version. The same exploit also runs as a Lua payload from
 inside a game process.
 
+## Tarayıcıdan erişim (bu fork)
+
+Arayüz Türkçe ve CRYSTALLIZE temasıyla yeniden çizildi. Sunucu kurmadan,
+doğrudan GitHub Pages üzerinden açılabilir:
+
+**https://alpay35.github.io/afterglow-web/**
+
+Konsolun tarayıcısına bu adresi yaz, payload'ı seç, **HOST'U BAŞLAT**.
+Otomatik başlat açıksa 5 saniye sonra kendiliğinden geçer.
+
+Aynı sayfa yerel ağda da çalışır (Pages kapalıyken ya da daha hızlı
+güncelleme için):
+
+```sh
+./serve.sh                      # port 8000
+```
+
+Yayınlanan kopya `main` dalından gelir: `git push origin main` sonrası
+GitHub Pages kendiliğinden yeniden derler (yaklaşık 30-60 sn).
+
+### Arayüzü değiştirdikten sonra
+
+`cache.appcache` manifest'i, listelediği dosyaların hash'lerini taşır; konsol
+yalnızca manifest değiştiğinde yeni dosyaları çeker. Bu yüzden **her arayüz
+değişikliğinden sonra**:
+
+```sh
+./make-manifest.sh              # cache.appcache'i yeniden üretir
+```
+
+`.github/workflows/manifest.yml` bunu denetler: manifest ile dosyalar
+uyuşmazsa push kırmızıya döner, böylece bayat cache konsola sessizce
+gitmez.
+
+### Upstream ile senkron
+
+```sh
+git fetch upstream && git merge upstream/main
+```
+
+`origin` bu fork, `upstream` ise `well0nez/afterglow-web`.
+
 ## You need
 
 * PS4 on firmware 13.52 or 14.00, on your network
