@@ -1,46 +1,155 @@
 <!doctype html>
-<html class="landing" lang="en" manifest="cache.appcache">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>afterglow</title>
-    <link rel="stylesheet" href="style.css" />
-  </head>
-  <body>
-    <!-- Every run starts from here. The referrer guard in jb.js arms the chain
-         only when it was reached from this page, so that a browser restoring
-         its last session cannot re-run it unattended. -->
-    <div id="brand"><b>afterglow</b></div>
+<html class="landing" lang="tr" manifest="cache.appcache">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#070d1b">
 
-    <div class="shell">
-      <img class="meme" src="meme.png" alt="" />
+  <title>CRYSTALLIZE | PS4 HOST</title>
 
-      <main class="panel">
-        <p class="lede">PS4 kernel exploit &middot; firmware 13.52 and 14.00</p>
+  <link rel="stylesheet" href="style.css">
+</head>
 
-        <form class="pick" id="pick">
-          <label class="opt">
-            <input type="radio" name="payload" value="hen" />
-            <span>ps4-hen</span>
-          </label>
-          <label class="opt">
-            <input type="radio" name="payload" value="goldhen" checked />
-            <span>GoldHEN</span>
-          </label>
+<body>
 
-          <label class="opt opt-auto">
-            <input type="checkbox" id="auto" checked />
-            <span>autostart</span>
-          </label>
-
-          <button class="btn" type="submit">start</button>
-          <p class="count" id="count"></p>
-          <p class="count" id="cache" aria-live="polite"></p>
-        </form>
-      </main>
+  <!-- Her koşu buradan başlar. jb.js'teki referrer kontrolü zinciri yalnızca
+       bu sayfadan gelindiğinde kurar; böylece tarayıcı son oturumunu geri
+       yüklediğinde exploit kendiliğinden çalışmaz. -->
+  <header id="brand">
+    <div class="brand-inner">
+      <div class="brand-mark">C</div>
+      <div class="brand-name">
+        <b>CRYSTALLIZE</b>
+        <span>PLAYSTATION 4 HOST</span>
+      </div>
+      <div class="brand-version">FW 13.52 &middot; 14.00</div>
     </div>
+  </header>
 
-    <p class="byline">by well0nez/m0zz</p>
-    <script src="launch.js"></script>
-  </body>
+  <main class="shell">
+
+    <section class="hero">
+
+      <div class="hero-label">
+        <span class="status-dot"></span>
+        SİSTEM HAZIR
+      </div>
+
+      <h1>
+        PLAYSTATION'ININ<br>
+        <span>KİLİDİNİ AÇ.</span>
+      </h1>
+
+      <p class="hero-description">
+        Konsolun kendi tarayıcısından çalışır, kernel'i açar
+        ve HEN ya da GoldHEN'i yükler. Konsola hiçbir şey kurulmaz.
+      </p>
+
+      <div class="firmware-card">
+        <div class="firmware-info">
+          <span class="info-label">HEDEF SÜRÜM</span>
+          <strong>13.52 &middot; 14.00</strong>
+        </div>
+
+        <div class="firmware-divider"></div>
+
+        <div class="firmware-info">
+          <span class="info-label">HOST SÜRÜMÜ</span>
+          <strong>1.0.0</strong>
+        </div>
+      </div>
+
+    </section>
+
+    <section class="panel">
+
+      <div class="panel-heading">
+        <div>
+          <span class="section-label">YAPILANDIRMA</span>
+          <h2>Payload Seçimi</h2>
+        </div>
+
+        <span class="panel-indicator">01 / 02</span>
+      </div>
+
+      <form class="pick" id="pick">
+
+        <label class="opt">
+          <input
+            type="radio"
+            name="payload"
+            value="hen"
+          >
+
+          <span class="opt-content">
+            <span class="opt-name">PS4 HEN</span>
+            <span class="opt-description">Homebrew etkinleştirici</span>
+          </span>
+
+          <span class="opt-check"></span>
+        </label>
+
+        <label class="opt selected">
+          <input
+            type="radio"
+            name="payload"
+            value="goldhen"
+            checked
+          >
+
+          <span class="opt-content">
+            <span class="opt-name">GoldHEN</span>
+            <span class="opt-description">GoldHEN payload'ı</span>
+          </span>
+
+          <span class="opt-check"></span>
+        </label>
+
+        <p class="hint">
+          13.52'de GoldHEN yerine PS4 HEN seç.
+        </p>
+
+        <div class="auto-container">
+          <label class="auto-label" for="auto">
+            <span class="auto-text">
+              <strong>Otomatik başlat</strong>
+              <small>Host'u kendiliğinden başlatır</small>
+            </span>
+
+            <input
+              type="checkbox"
+              id="auto"
+              checked
+            >
+
+            <span class="toggle"></span>
+          </label>
+        </div>
+
+        <button class="btn" type="submit">
+          <span>HOST'U BAŞLAT</span>
+          <span class="btn-arrow">&rarr;</span>
+        </button>
+
+        <p class="count" id="count" aria-live="polite"></p>
+        <p class="count" id="cache" aria-live="polite"></p>
+
+      </form>
+
+      <div class="panel-footer">
+        <span>CRYSTALLIZE SYSTEMS</span>
+        <span>SÜRÜM 13.52 &middot; 14.00</span>
+      </div>
+
+    </section>
+
+  </main>
+
+  <footer class="byline">
+    CRYSTALLIZE PS4 HOST &copy; 2026
+  </footer>
+
+  <script src="launch.js"></script>
+
+</body>
 </html>

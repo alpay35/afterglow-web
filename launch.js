@@ -1,7 +1,7 @@
-/* The landing page: pick a payload, then start the run.
+/* Açılış sayfası: payload'ı seç, sonra koşuyu başlat.
  *
- * Leaving this page has to be a real navigation from it -- the referrer guard
- * in jb.js arms the chain only when the run page was reached from here. */
+ * Bu sayfadan ayrılmak gerçek bir yönlendirme olmalı: jb.js'teki referrer
+ * kontrolü zinciri yalnızca koşu sayfasına buradan gelindiğinde kurar. */
 
 var TARGET = {
   hen: "log=1&afterglow=run&payload=hen.bin",
@@ -18,19 +18,20 @@ var cacheEl = document.getElementById("cache");
 var ticker = null;
 var waitingForCache = false;
 
-/* The offline cache, and the one state that must not be run through.
+/* Çevrimdışı önbellek ve koşunun başlamaması gereken tek durum.
  *
- * While the manifest is being checked or fetched, some modules are the ones
- * the page loaded with and some are not yet on disk -- starting there can mix
- * two builds. Every other state is fine to start from: IDLE is cached and
- * current, UNCACHED means no cache at all (which works as long as the server
- * answers), and a browser with no Application Cache at all -- every desktop
- * browser since Chrome 95 -- must obviously still be able to start.
+ * Manifest denetlenirken ya da indirilirken modüllerin bir kısmı sayfanın
+ * açılışta yüklediği, bir kısmı ise henüz diskte olmayan sürümlerdir; orada
+ * başlamak iki ayrı build'i karıştırır. Diğer bütün durumlar başlamak için
+ * uygundur: IDLE önbellekli ve güncel, UNCACHED hiç önbellek yok (sunucu
+ * yanıt verdikçe çalışır), Application Cache'i hiç olmayan bir tarayıcı ise
+ * (Chrome 95'ten beri her masaüstü tarayıcısı) elbette başlayabilmeli.
  *
- * So this blocks on CHECKING and DOWNLOADING and nothing else. The inverse,
- * passing only on IDLE, leaves the button dead wherever the cache is absent.
+ * Yani yalnızca CHECKING ve DOWNLOADING durumlarında bekletilir. Tersi,
+ * yani sadece IDLE'da izin vermek, önbelleğin olmadığı her yerde düğmeyi
+ * ölü bırakır.
  *
- * The idea is titotryh-ux's, from Fewi-PS4 911e08a. */
+ * Fikir titotryh-ux'un, Fewi-PS4 911e08a'dan. */
 var appCache = (function () {
   try { return window.applicationCache || null; } catch (e) { return null; }
 })();
@@ -50,18 +51,18 @@ function cacheNote() {
   if (!appCache) { cacheEl.textContent = ""; return; }
   var text = "";
   try {
-    if (appCache.status === appCache.CHECKING) text = "checking for updates";
-    else if (appCache.status === appCache.DOWNLOADING) text = "loading files - hold on";
-    else if (appCache.status === appCache.UPDATEREADY) text = "a newer version is cached - reopen this page to use it";
-    else if (appCache.status === appCache.OBSOLETE) text = "the cache was dropped - the server answers directly";
+    if (appCache.status === appCache.CHECKING) text = "önbellek denetleniyor";
+    else if (appCache.status === appCache.DOWNLOADING) text = "dosyalar iniyor, bekle";
+    else if (appCache.status === appCache.UPDATEREADY) text = "yeni sürüm önbellekte, sayfayı yenileyip aç";
+    else if (appCache.status === appCache.OBSOLETE) text = "önbellek düştü, doğrudan sunucudan";
   } catch (e) {}
   cacheEl.textContent = text;
 }
 
 function cacheChanged() {
   cacheNote();
-  /* Someone pressed start while the files were still coming down. Go now
-     that they are here, rather than making them press again. */
+  /* Biri dosyalar hâlâ inerken başlata bastı. Dosyalar geldiğine göre şimdi
+     git, bir daha basmasını bekleme. */
   if (waitingForCache && !cacheBusy()) {
     waitingForCache = false;
     start();
@@ -76,10 +77,10 @@ if (appCache) {
   }
 }
 
-/* The choice is remembered in localStorage, not by any HTTP cache: cache
-   headers decide whether a file is fetched again, never what the page
-   remembers. Both accessors are guarded, because storage can be unavailable
-   or throw outright, and the page has to work either way. */
+/* Seçim localStorage'da hatırlanır, HTTP önbelleğinde değil: cache başlıkları
+   bir dosyanın yeniden indirilip indirilmeyeceğini belirler, sayfanın neyi
+   hatırladığını asla. İki erişim de korumalı, çünkü depolama kullanılamıyor
+   olabilir ya da doğrudan fırlatabilir; sayfa her iki durumda da çalışmalı. */
 function remember() {
   try {
     localStorage.setItem(
@@ -112,10 +113,10 @@ function picked() {
 
 function start() {
   stopClock();
-  /* Not a refusal -- a wait. The run begins by itself once the files are in. */
+  /* Reddetme değil, bekleme: dosyalar inince koşu kendiliğinden başlar. */
   if (cacheBusy()) {
     waitingForCache = true;
-    countEl.textContent = "waiting for the cache";
+    countEl.textContent = "önbellek bekleniyor";
     cacheNote();
     return;
   }
@@ -132,14 +133,14 @@ function stopClock() {
 
 function startClock() {
   var left = AUTOSTART_SECONDS;
-  countEl.textContent = "starting in " + left + "s";
+  countEl.textContent = left + " sn sonra başlıyor";
   ticker = setInterval(function () {
     left -= 1;
     if (left <= 0) {
       start();
       return;
     }
-    countEl.textContent = "starting in " + left + "s";
+    countEl.textContent = left + " sn sonra başlıyor";
   }, 1000);
 }
 
@@ -155,8 +156,8 @@ form.addEventListener("change", function (ev) {
     else stopClock();
     return;
   }
-  /* Switching payload while the clock runs restarts it, so what is counting
-     down is always what is actually selected. */
+  /* Geri sayım sürerken payload değiştirmek sayacı yeniden başlatır, böylece
+     sayan şey her zaman gerçekten seçili olan olur. */
   if (ev.target.name === "payload" && autoBox.checked) {
     stopClock();
     startClock();

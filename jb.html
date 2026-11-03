@@ -1,198 +1,507 @@
+
 <!doctype html>
-<html lang="en" manifest="cache.appcache">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>afterglow</title>
-    <!-- This page carries its own styles and starts its own module, and it
-         loads NOTHING else. That duplicates a little of style.css, and it is
-         deliberate: every subresource is one more allocation and one more
-         timing shift in the process that core.js is about to groom, and this
-         exploit is decided by exactly that. The landing page may use the
-         shared stylesheet; this one may not. -->
-    <style>
-      :root {
-        --bg: #0b0d10;
-        --panel: #0e1116;
-        --sunk: #11151b;
-        --line: #1e2732;
-        --fg: #c8ced8;
-        --bright: #e6ebf2;
-        --dim: #7c8798;
-        --faint: #4d5765;
-        --ok: #7fd0a0;
-        --bad: #d08a7f;
-        --warn: #d8c07f;
-        --sans: "Segoe UI", system-ui, sans-serif;
-        --mono: Consolas, "DejaVu Sans Mono", monospace;
-      }
-      * {
-        box-sizing: border-box;
-      }
-      html,
-      body {
-        margin: 0;
-        padding: 0;
-        min-height: 100%;
-        background: var(--bg);
-        color: var(--fg);
-        font: 15px/1.45 var(--sans);
-      }
-      #brand {
-        padding: 8px 10px;
-        border-bottom: 1px solid var(--line);
-        background: var(--panel);
-        text-align: center;
-      }
-      #brand b {
-        color: var(--bright);
-        font-size: 15px;
-        font-weight: 700;
-        letter-spacing: 0.14em;
-      }
-      /* The live heap readout sits in the flow under the bar. Nothing here
-         scrolls the document itself, so it stays in view without being
-         positioned over the wordmark. */
-      #ramBox {
-        overflow: hidden;
-        padding: 5px 10px;
-        border-bottom: 1px solid var(--line);
-        background: var(--sunk);
-        color: var(--ok);
-        font: 11px/1.4 var(--mono);
-        text-overflow: ellipsis;
-        white-space: nowrap;
-      }
-      /* Running: a spinner under the bar. jb.js switches the body to .done,
-         .fail or .log. */
-      #spin {
-        position: fixed;
-        top: calc(50% + 20px);
-        left: 50%;
-        width: 46px;
-        height: 46px;
-        margin: -23px 0 0 -23px;
-        border: 4px solid var(--line);
-        border-top-color: var(--ok);
-        border-radius: 50%;
-        animation: spin 0.9s linear infinite;
-      }
-      @keyframes spin {
-        to {
-          transform: rotate(360deg);
-        }
-      }
-      #msg {
-        position: fixed;
-        top: 50%;
-        left: 0;
-        right: 0;
-        transform: translateY(-50%);
-        display: none;
-        text-align: center;
-        font-size: 16px;
-        letter-spacing: 0.5px;
-      }
-      #state,
-      #out {
-        display: none;
-      }
-      body.done #spin,
-      body.fail #spin {
-        display: none;
-      }
-      body.fail #msg {
-        display: block;
-      }
-      body.done #msg {
-        display: block;
-        color: var(--ok);
-        font-weight: 700;
-        letter-spacing: 2px;
-      }
-      /* ?log=1 -- the full step log. Laid out with flex rather than by
-         subtracting a header height from 100vh. */
-      body.log {
-        display: flex;
-        flex-direction: column;
-        height: 100vh;
-      }
-      body.log #spin,
-      body.log #msg {
-        display: none;
-      }
-      body.log #wrap {
-        display: flex;
-        flex-direction: column;
-        flex: 1;
-        min-height: 0;
-        padding: 14px 18px 30px;
-      }
-      body.log #state {
-        display: block;
-        margin: 0 0 8px;
-        font-size: 22px;
-        font-weight: 700;
-      }
-      body.log #out {
-        display: block;
-        flex: 1;
-        min-height: 0;
-        overflow-y: auto;
-        padding: 10px 12px;
-        border: 1px solid var(--line);
-        border-radius: 5px;
-        background: var(--sunk);
-        font: 12px/1.45 var(--mono);
-        white-space: pre-wrap;
-      }
-      /* The retry notice, raised by jb.js when the chain throws or stalls. */
-      .notice {
-        margin: 1em 0;
-        padding: 0.7em 1em;
-        border: 2px solid #e66;
-        background: #2a1414;
-        color: #f99;
-        font: 700 20px/1.4 var(--sans);
-      }
-      .byline {
-        position: fixed;
-        bottom: 9px;
-        left: 11px;
-        margin: 0;
-        color: var(--faint);
-        font: 11px/1 var(--mono);
-        letter-spacing: 0.06em;
-      }
-      .ok {
-        color: var(--ok);
-      }
-      .bad {
-        color: var(--bad);
-      }
-      .warn {
-        color: var(--warn);
-      }
-      code {
-        color: #9fb3d0;
-      }
-    </style>
-  </head>
-  <body>
-    <!-- jb.js owns the body class: .log while the step log is shown, .done or
-         .fail once the chain has settled. The ids below are its contract --
-         #ramBox, #msg, #state and #out are read by name. -->
-    <div id="brand"><b>afterglow</b></div>
-    <div id="ramBox">RAM: checking...</div>
-    <div id="spin"></div>
-    <div id="msg">Restart your console</div>
-    <div id="wrap">
-      <div id="state"></div>
-      <div id="out"></div>
-    </div>
-    <p class="byline">by well0nez/m0zz</p>
-    <script type="module">
-      import "./jb.js";
-    </script>
-  </body>
+<html lang="tr" manifest="cache.appcache">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>CRYSTALLIZE | PS4</title>
+
+<!-- Bu sayfa kendi stillerini taşır ve kendi modülünü başlatır; başka
+     hiçbir şey yüklemez. style.css'in bir kısmını burada tekrarlıyor ve bu
+     bilinçli: her alt kaynak, core.js'in birazdan düzenleyeceği süreçte bir
+     allocation ve bir zamanlama kayması daha demektir. Açılış sayfası ortak
+     stil dosyasını kullanabilir; bu sayfa kullanamaz. -->
+<style>
+:root {
+  --bg: #030604;
+  --panel: #080e09;
+  --panel2: #0b140c;
+  --line: #19351e;
+  --green: #42ff72;
+  --green2: #a0ffb2;
+  --dim: #52835d;
+  --red: #ff4355;
+  --yellow: #e8d66c;
+  --text: #c3eac9;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  min-height: 100%;
+  margin: 0;
+}
+
+html {
+  background: var(--bg);
+}
+
+body {
+  min-height: 100vh;
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  background:
+    radial-gradient(ellipse at 50% 0%, #102317 0%, transparent 55%),
+    #030604;
+
+  color: var(--text);
+  font-family: Consolas, "Courier New", monospace;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+  position: relative;
+}
+
+/* SCANLINE EFFECT */
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 10;
+  pointer-events: none;
+
+  background: repeating-linear-gradient(
+    to bottom,
+    rgba(0,0,0,0) 0px,
+    rgba(0,0,0,0) 3px,
+    rgba(0,0,0,.13) 4px
+  );
+}
+
+/* SUBTLE GRID */
+
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+
+  background-image:
+    linear-gradient(rgba(66,255,114,.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(66,255,114,.025) 1px, transparent 1px);
+
+  background-size: 35px 35px;
+}
+
+/* BRAND */
+
+#brand {
+  width: 100%;
+  max-width: 1050px;
+  margin: 0 auto 14px;
+  padding: 12px 15px;
+
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--green);
+
+  background: rgba(8,18,10,.94);
+
+  color: var(--green);
+  font-size: 16px;
+  font-weight: 900;
+  letter-spacing: 4px;
+  text-align: left;
+  text-shadow: 0 0 12px rgba(66,255,114,.3);
+
+  position: relative;
+  z-index: 1;
+}
+
+#brand b {
+  font-weight: 900;
+}
+
+#brand::after {
+  content: " // YETKİSİZ ERİŞİM TERMİNALİ";
+  display: block;
+  margin-top: 7px;
+
+  color: var(--dim);
+  font-size: 9px;
+  letter-spacing: 2px;
+  font-weight: normal;
+  text-shadow: none;
+}
+
+/* RAM */
+
+#ramBox {
+  width: 100%;
+  max-width: 1050px;
+  margin: 0 auto 12px;
+  padding: 10px 13px;
+
+  border: 1px solid var(--line);
+  background: rgba(7,15,8,.95);
+
+  color: var(--green2);
+  font-family: Consolas, "Courier New", monospace;
+  font-size: 11px;
+  line-height: 1.7;
+  overflow-wrap: anywhere;
+
+  position: relative;
+  z-index: 1;
+}
+
+#ramBox::before {
+  content: "[ BELLEK İZLEYİCİSİ ]";
+  display: block;
+  margin-bottom: 4px;
+
+  color: var(--dim);
+  font-size: 9px;
+  letter-spacing: 2px;
+}
+
+/* LOADING */
+
+#spin {
+  width: 32px;
+  height: 32px;
+  margin: 22px auto;
+
+  border: 2px solid #17321d;
+  border-top-color: var(--green);
+  border-right-color: var(--green);
+  border-radius: 50%;
+
+  animation: spin .7s linear infinite;
+
+  box-shadow: 0 0 15px rgba(66,255,114,.12);
+
+  position: relative;
+  z-index: 1;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* MAIN MESSAGE */
+
+#msg {
+  width: 100%;
+  max-width: 1050px;
+  margin: 10px auto;
+
+  color: var(--green);
+  font-size: 14px;
+  font-weight: bold;
+  letter-spacing: 2px;
+  line-height: 1.8;
+  text-align: center;
+  text-transform: uppercase;
+
+  position: relative;
+  z-index: 1;
+}
+
+/* TERMINAL */
+
+#wrap {
+  width: 100%;
+  max-width: 1050px;
+  margin: 12px auto 0;
+
+  border: 1px solid #25462b;
+  background: rgba(5,11,6,.97);
+
+  box-shadow:
+    0 0 25px rgba(0,0,0,.5),
+    0 0 15px rgba(66,255,114,.045);
+
+  position: relative;
+  z-index: 1;
+}
+
+/* TERMINAL HEADER */
+
+#state {
+  min-height: 39px;
+  padding: 12px 14px;
+
+  border-bottom: 1px solid var(--line);
+  background: #0c170d;
+
+  color: var(--green);
+  font-size: 11px;
+  font-weight: bold;
+  letter-spacing: 1.5px;
+  line-height: 1.5;
+  text-transform: uppercase;
+}
+
+#state::before {
+  content: "> ";
+  color: var(--dim);
+}
+
+/* OUTPUT */
+
+#out {
+  min-height: 230px;
+  max-height: 65vh;
+  overflow: auto;
+
+  padding: 17px;
+
+  background: #020503;
+  color: #a9e8b2;
+
+  font-family: Consolas, "Courier New", monospace;
+  font-size: 12px;
+  line-height: 1.85;
+
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+
+  -webkit-overflow-scrolling: touch;
+}
+
+#out::selection {
+  background: #1d632c;
+  color: white;
+}
+
+/* LOG MODE */
+
+body.log #spin,
+body.log #msg {
+  display: none;
+}
+
+body.log #wrap {
+  display: block;
+}
+
+/* SUCCESS */
+
+body.done #spin {
+  display: none;
+}
+
+body.done #msg {
+  color: var(--green);
+  animation: successFlash .8s ease-out;
+}
+
+body.done #msg::before {
+  content: "[ ERİŞİM SAĞLANDI ] ";
+}
+
+body.done #msg::after {
+  content: "BAŞARILI // TARAYICIYI KAPAT";
+  display: block;
+
+  margin: 15px auto 0;
+  padding: 15px;
+
+  border: 1px solid var(--green);
+  background: rgba(66,255,114,.09);
+
+  color: var(--green);
+  font-size: 13px;
+  letter-spacing: 2px;
+
+  box-shadow: 0 0 20px rgba(66,255,114,.13);
+
+  animation: reveal .8s ease-out;
+}
+
+body.done #wrap {
+  border-color: var(--green);
+  box-shadow: 0 0 25px rgba(66,255,114,.12);
+}
+
+body.done #state {
+  color: var(--green2);
+  background: #0c1d0f;
+}
+
+@keyframes successFlash {
+  0% { opacity: .1; transform: scale(.97); }
+  50% { opacity: 1; transform: scale(1.03); }
+  100% { transform: scale(1); }
+}
+
+@keyframes reveal {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* FAILURE */
+
+body.fail #spin {
+  display: none;
+}
+
+body.fail #msg {
+  color: var(--red);
+}
+
+body.fail #msg::before {
+  content: "[ ERİŞİM REDDEDİLDİ ] ";
+}
+
+body.fail #wrap {
+  border-color: #76212b;
+}
+
+body.fail #state {
+  color: var(--red);
+}
+
+/* NOTICE */
+
+.notice {
+  margin: 12px;
+  padding: 14px;
+
+  border: 1px solid rgba(255,67,85,.4);
+  border-left: 3px solid var(--red);
+
+  background: #19090c;
+  color: #ff9da7;
+
+  font-size: 12px;
+  line-height: 1.8;
+}
+
+/* STATUS COLORS */
+
+.ok {
+  color: var(--green);
+}
+
+.bad {
+  color: var(--red);
+}
+
+.warn {
+  color: var(--yellow);
+}
+
+/* CODE */
+
+code {
+  padding: 2px 5px;
+  background: #102516;
+  color: var(--green2);
+  font-family: Consolas, "Courier New", monospace;
+}
+
+/* FOOTER */
+
+.byline {
+  width: 100%;
+  max-width: 1050px;
+  margin: 18px auto 0;
+
+  color: #416249;
+  font-size: 9px;
+  letter-spacing: 2px;
+  text-align: center;
+
+  position: relative;
+  z-index: 1;
+}
+
+/* RESPONSIVE */
+
+@media (max-width: 600px) {
+  body {
+    padding: 12px 9px;
+  }
+
+  #brand {
+    font-size: 13px;
+    letter-spacing: 3px;
+  }
+
+  #out {
+    min-height: 200px;
+    padding: 12px;
+    font-size: 11px;
+  }
+
+  #ramBox {
+    font-size: 10px;
+  }
+}
+
+/* TELEVİZYON: 1080p ve üstü. Tema 1050 px'lik bir tuval için çizildi; PS4
+   tarayıcısı televizyonda ~1920 px rapor ettiği için yazı ve günlük alanı
+   uzaktan okunacak kadar büyütülür. */
+@media (min-width: 1500px) {
+  #brand, #ramBox, #msg, #wrap, .byline {
+    max-width: 1500px;
+  }
+
+  #brand {
+    padding: 15px 18px;
+    font-size: 19px;
+  }
+
+  #ramBox {
+    font-size: 13px;
+  }
+
+  #state {
+    font-size: 16px;
+  }
+
+  #msg {
+    font-size: 18px;
+  }
+
+  #out {
+    min-height: 260px;
+    font-size: 14px;
+  }
+
+  .byline {
+    font-size: 11px;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<!-- Gövde sınıfını jb.js yönetir: adım günlüğü açıkken .log, zincir
+     oturduğunda .done ya da .fail. Aşağıdaki id'ler onun sözleşmesi:
+     #ramBox, #msg, #state ve #out adlarıyla okunur. -->
+<div id="brand"><b>CRYSTALLIZE</b></div>
+
+<div id="ramBox">RAM: ölçülüyor...</div>
+
+<div id="spin"></div>
+
+<div id="msg">Konsolu yeniden başlat</div>
+
+<div id="wrap">
+  <div id="state"></div>
+  <div id="out"></div>
+</div>
+
+<p class="byline">CRYSTALLIZE</p>
+
+<script type="module">
+  import "./jb.js";
+</script>
+
+</body>
 </html>

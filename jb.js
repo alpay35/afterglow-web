@@ -28,7 +28,7 @@ function showNotice(text) {
 function showRetry() {
   if (retryShown) return;
   retryShown = true;
-  showNotice("exploit failed - please retry (reopen browser)");
+  showNotice("exploit başarısız - yeniden dene (tarayıcıyı kapatıp aç)");
 }
 
 const WATCHDOG_MS = 45000;
@@ -76,8 +76,8 @@ const SENT_HOME = (function () {
     const msgEl = document.getElementById("msg");
     if (msgEl) {
       msgEl.textContent =
-        "Restored by the browser. Nothing has been run -- " +
-        "going back to the start page.";
+        "Sayfa tarayıcı tarafından geri yüklendi. Hiçbir şey " +
+        "çalıştırılmadı - başlangıç sayfasına dönülüyor.";
     }
   } catch (e) {}
   /* replace(), not assign(): the refused page must not stay in the history,
@@ -94,9 +94,7 @@ const PROBE_MODE = params.get("probe") === "1";
 
 const VERBOSE = params.get("verbose") === "1";
 const PROSE = [
-  / -- /,
   /\.\s/,
-  /;\s/,
   /,\s+(which|so|and that|because|since|as that)\s/,
   /\s+(because|rather than|instead of|so that|which is|which means|which the|so the)\s/,
   /\s+so\s+[a-z]/,
@@ -138,7 +136,7 @@ function updateRamBox() {
   }
 
   let heapText =
-    "JS heap: N/A";
+    "JS yığını: N/A";
 
   try {
     if (
@@ -160,7 +158,7 @@ function updateRamBox() {
           used / limit * 100;
 
         heapText =
-          "JS heap: " +
+          "JS yığını: " +
           percent.toFixed(1) +
           "% (" +
           formatMB(used) +
@@ -175,7 +173,7 @@ function updateRamBox() {
     }
   } catch (ramError) {
     heapText =
-      "JS heap: error";
+      "JS yığını: hata";
   }
 
   let coreText =
@@ -200,7 +198,7 @@ function updateRamBox() {
     }
   } catch (coreError) {
     coreText =
-      "core: error";
+      "core: hata";
   }
 
   ramBox.textContent =
@@ -227,10 +225,10 @@ function finishUI(ok, ran) {
   const m = document.getElementById("msg");
   if (m)
     m.textContent = ok
-      ? "DONE"
+      ? "TAMAM"
       : ran
-        ? "Restart your console"
-        : "Refresh the page and run again";
+        ? "Konsolu yeniden başlat"
+        : "Sayfayı yenile ve tekrar dene";
   document.body.className = ok ? "done" : "fail";
 }
 function mark(tag, detail) {
@@ -320,13 +318,13 @@ let mainMf = null,
 
   try {
     const { key, off } = offsetsFor(navigator.userAgent);
-    mark("FW", key || "(not a PS4 UA)");
+    mark("FW", key || "(PS4 UA değil)");
     if (!off) {
       try {
         document.body.classList.add("log");
       } catch (e) {}
 
-      state("not a PS4 browser - debug mode", "warn");
+      state("PS4 tarayıcısı değil - hata ayıklama modu", "warn");
 
       mark(
         "NONPS4-DEBUG",
@@ -392,10 +390,11 @@ let mainMf = null,
     if (params.get("afterglow") && SUPPORTED.indexOf(fwKey) < 0) {
       mark("FW-UNSUPPORTED", fwKey + " -- this build has a kernel stage for "
            + SUPPORTED.join(", ") + " only");
-      state("firmware " + fwKey + " is not supported", "fail");
+      state("ürün yazılımı " + fwKey + " desteklenmiyor", "fail");
       showNotice(
-        "This build has a kernel stage for firmware " + SUPPORTED.join(", ") +
-        " only. Detected " + fwKey + " - nothing was run.",
+        "Bu sürüm yalnızca " + SUPPORTED.join(" ve ") +
+        " için kernel aşaması taşıyor. Algılanan: " + fwKey +
+        " - hiçbir şey çalıştırılmadı.",
       );
       return;
     }
@@ -410,7 +409,7 @@ let mainMf = null,
     const PRIMITIVE_ONLY = params.get("stop") === "primitive";
 
     if (PRIMITIVE_ONLY) {
-      state("testing WebKit primitive...", "warn");
+      state("WebKit ilkeli sınanıyor...", "warn");
 
       await new Promise(function (resolve) {
         setTimeout(resolve, 0);
@@ -583,7 +582,7 @@ let mainMf = null,
     );
 
 
-    state("running the primitive...", "warn");
+    state("ilkel çalıştırılıyor...", "warn");
     await new Promise((r) => setTimeout(r, 0));
 
     const PRIMITIVE_LOUD = /FAIL|ERROR|THREW|RETRY|ABORT|PASS/i;
