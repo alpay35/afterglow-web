@@ -472,6 +472,25 @@ html.landing .panel {
   margin-right: 6px;
 }
 
+/* Ürün yazılımı satırı: algılanan sürüm ya da uyarı. */
+.hint.ok {
+  color: var(--ok);
+}
+
+.hint.ok::before {
+  content: "\2713";
+}
+
+.hint.bad {
+  color: var(--bad);
+}
+
+.btn[disabled] {
+  opacity: 0.45;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
 /* PANEL FOOTER */
 
 .panel-footer {
