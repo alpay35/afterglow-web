@@ -28,6 +28,26 @@ güncelleme için):
 Yayınlanan kopya `main` dalından gelir: `git push origin main` sonrası
 GitHub Pages kendiliğinden yeniden derler (yaklaşık 30-60 sn).
 
+### Payload: yamalı `hen.bin`
+
+Bu depoda `hen.bin` **yamalı** sürümdür:
+
+```
+6417a84a72f9c7988f0e33b3ae190542   yamalı (bunu kullan)
+9aff7544eddef2f8202f72fc633d2be3   upstream, yamalanmamış (14.00'te her uygulama açılışında donar)
+```
+
+Yama `sceSblPfsSetKeys` adresini `0x006272B0` → `0x00627270` yapar. Bu dosya
+`cache.appcache` içinde listelendiği için ilk ziyarette konsolun offline
+cache'ine girer; sonraki koşularda payload oradan okunur, ağdan tekrar inmez.
+
+CI iki şeyi denetler: `hen.bin`'in md5'i bu sabit değer olmalı ve dosya
+manifestte listeli olmalı. Yamalanmamış sürüm ya da cache'ten düşmüş bir
+kayıt push edilirse build kırmızıya döner.
+
+Konsolda doğrulamak için: ana sayfadaki önbellek satırı `önbellek hazır ve
+güncel` yazıyorsa payload cihazdadır.
+
 ### Arayüzü değiştirdikten sonra
 
 `cache.appcache` manifest'i, listelediği dosyaların hash'lerini taşır; konsol

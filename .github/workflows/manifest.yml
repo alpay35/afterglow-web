@@ -47,3 +47,25 @@ jobs:
             fail=1
           fi
           exit $fail
+
+      # 14.00'te yamalanmamış hen.bin her uygulama açılışında konsolu dondurur
+      # (sceSblPfsSetKeys adresi). Bu yüzden payload'ın kimliği sabitlenir:
+      # yanlış dosya ya da cache'ten düşmüş bir kayıt build'i durdurur.
+      - name: hen.bin is the patched build and is cached
+        run: |
+          patched=6417a84a72f9c7988f0e33b3ae190542
+          broken=9aff7544eddef2f8202f72fc633d2be3
+          got=$(md5sum hen.bin | cut -d' ' -f1)
+          if [ "$got" = "$broken" ]; then
+            echo "::error file=hen.bin::yamalanmamış upstream sürüm -- 14.00'te her uygulama açılışında donar"
+            exit 1
+          fi
+          if [ "$got" != "$patched" ]; then
+            echo "::error file=hen.bin::md5 $got, beklenen $patched"
+            exit 1
+          fi
+          if ! grep -qE '^hen\.bin #[0-9a-f]{32}$' cache.appcache; then
+            echo "::error file=cache.appcache::hen.bin manifestte yok -- cihaz önbelleğine girmez"
+            exit 1
+          fi
+          echo "hen.bin: yamalı sürüm doğrulandı ve manifestte listeli"
